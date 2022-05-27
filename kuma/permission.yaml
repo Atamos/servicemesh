@@ -1,0 +1,104 @@
+
+
+apiVersion: kuma.io/v1alpha1
+kind: TrafficPermission
+mesh: default
+metadata: 
+  name: graphana-to-prometeus
+spec: 
+  sources: 
+    - match: 
+        kuma.io/service: 'grafana_kuma-metrics_svc_80'
+  destinations: 
+    - match: 
+        kuma.io/service: '*'
+
+--- 
+
+apiVersion: kuma.io/v1alpha1
+kind: TrafficPermission
+mesh: default
+metadata: 
+  name: service-to-service-a-b
+spec: 
+  sources: 
+    - match: 
+        kuma.io/service: 'my-kong-kong-admin_kong_svc_8001'
+    - match: 
+        kuma.io/service: 'router-test_demo_svc_80'
+    - match: 
+        kuma.io/service: 'service-b_demo_svc_80'
+    - match: 
+        kuma.io/service: 'service-a_demo_svc_80'        
+  destinations: 
+    - match: 
+        kuma.io/service: 'service-b_demo_svc_80'
+    - match: 
+        kuma.io/service: 'service-a_demo_svc_80'        
+    - match: 
+        kuma.io/service: 'service-c_demo_svc_80'
+    - match: 
+        kuma.io/service: 'router-test_demo_svc_80'
+    - match:
+        kuma.io/service: 'kafka-service_demo_svc_9092'
+    - match:  
+        kuma.io/service: 'ktool-schema-registry_demo_svc_8081'
+
+--- 
+apiVersion: kuma.io/v1alpha1
+kind: TrafficPermission
+mesh: default
+metadata: 
+  name: kong-to-grafana
+spec: 
+  sources: 
+    - match: 
+        kuma.io/service: 'my-kong-kong-admin_kong_svc_8001'
+  destinations: 
+    - match: 
+        kuma.io/service: 'grafana_kuma-metrics_svc_80'
+    - match: 
+        kuma.io/service: 'my-akhq_demo_svc_80'
+
+
+
+
+--- 
+apiVersion: kuma.io/v1alpha1
+kind: TrafficPermission
+mesh: default
+metadata: 
+  name: kafka-ui
+spec: 
+  sources: 
+    - match: 
+        kuma.io/service: 'my-akhq_demo_svc_80'
+    - match: 
+        kuma.io/service: 'kafka-service_demo_svc_9092'
+    - match: 
+        kuma.io/service: 'schema-registry_demo_svc_8081'
+    - match: 
+        kuma.io/service: 'service-a_demo_svc_80'
+  destinations: 
+    - match: 
+        kuma.io/service: 'zoo1_demo_svc_2181'
+    - match: 
+        kuma.io/service: 'kafka-service_demo_svc_9092'
+    - match: 
+        kuma.io/service: 'ktool-schema-registry_demo_svc_8081'
+
+
+# apiVersion: kuma.io/v1alpha1
+# kind: TrafficPermission
+# mesh: default
+# metadata: 
+#   name: kong-to-grafana
+# spec: 
+#   sources: 
+#     - match: 
+#         kuma.io/service: '*'
+#   destinations: 
+#     - match: 
+#         kuma.io/service: '*'
+
+

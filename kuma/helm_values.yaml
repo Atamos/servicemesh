@@ -1,0 +1,5 @@
+controlPlane:
+  service:
+    annotations:
+      konghq.com/path: /gui/
+  

@@ -1,0 +1,13 @@
+apiVersion: kuma.io/v1alpha1
+kind: ExternalService
+mesh: default
+metadata:
+  name: idprovider
+spec:
+  tags:
+    kuma.io/service: idprovider
+    kuma.io/protocol: http
+  networking:
+    address: idsvr-tutorial-runtime-svc.default.svc.cluster.local:8443
+    # tls:
+    #   enabled: true

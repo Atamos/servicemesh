@@ -1,0 +1,18 @@
+apiVersion: kuma.io/v1alpha1
+kind: FaultInjection
+mesh: default
+metadata:
+  name: failure-b
+spec:
+  sources:
+    - match:
+        kuma.io/service: service-a_demo_svc_80
+        kuma.io/protocol: http
+  destinations:
+    - match:
+        kuma.io/service: service-b_demo_svc_3000
+        kuma.io/protocol: http
+  conf:        
+    abort:
+      httpStatus: 500
+      percentage: 100

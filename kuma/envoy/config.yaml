@@ -1,0 +1,13 @@
+services:
+  - name: controller
+    url: https://github.com/Atamos/opa/raw/
+bundles:
+  envoy/authz:
+    service: controller
+    resource: gh-pages/example-bundle.tar.gz
+plugins:
+  envoy_ext_authz_grpc:
+    addr: :9191
+    path: policies/envoy/authz/allow
+    dry-run: false
+    enable-reflection: false
