@@ -1,0 +1,99 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: phantom-token-plugin
+  namespace: demo
+config:
+  introspection_endpoint: https://idsvr-tutorial-runtime-svc.default.svc.cluster.local:8443/oauth/v2/oauth-introspect
+  client_id: a
+  client_secret: test
+  token_cache_seconds: 900
+  scope: openid
+  verify_ssl: false
+plugin: phantom-token
+
+---
+
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: my-custom-plugin
+  namespace: demo
+config:
+  header_value: "my first plugin"
+plugin: myheader2
+
+---
+
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: opaoffload
+  namespace: demo
+  annotations:
+    kubernetes.io/ingress.class: kong
+config:
+   server:
+    host: opa.default.svc.cluster.local
+    port: 8181
+  #  document:
+  #   include_headers:
+  #   - x-consumer-id
+   policy:
+    decision: policies/kong/kongjwt/allow
+plugin: opa
+
+---
+
+# apiVersion: configuration.konghq.com/v1
+# kind: KongPlugin
+# metadata:
+#   name: apikey-plugin
+# config: 
+#   key_names:
+#   - apikey
+#   key_in_body: false
+#   key_in_header: true
+#   key_in_query: true
+#   hide_credentials: false
+#   run_on_preflight: true
+# plugin: key-auth
+
+
+---
+
+apiVersion: configuration.konghq.com/v1
+kind: KongClusterPlugin
+metadata:
+  name: global-cors
+  annotations:
+    kubernetes.io/ingress.class: kong
+  labels:
+    global: "true"
+config: 
+  origins:
+  - http://localhost
+  - http://localhost:3000
+  - '*'
+  methods:
+  - GET
+  - POST
+  - OPTIONS
+  - DELETE
+  headers:
+  - Accept
+  - Accept-Version
+  - Content-Length
+  - Content-MD5
+  - Content-Type
+  - Date
+  - X-Auth-Token
+  - Authorization
+  exposed_headers:
+  - X-Auth-Token
+  credentials: true
+  max_age: 3600
+  preflight_continue: false
+plugin: cors
+
+

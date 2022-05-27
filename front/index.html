@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        .log-console{
+            font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New';  
+            background-color: #0A253C !important;
+            color: #00D924;
+            padding: 10px;
+            margin: 20px 0;
+            border-radius: var(--radius);
+            font-size:0.8em;
+            max-height: 300px;
+            min-height: 300px;
+            overflow: scroll;
+        }
+    </style>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+
+
+    <title>Mesh</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Mesh demo</a>
+          <form class="d-flex">        
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+                <label class="btn btn-success" for="btnradio1">Noob</label>
+              
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" data-bs-toggle="collapse"  data-bs-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">
+                <label class="btn btn-danger" for="btnradio2">But i'm a nerd</label>
+              
+              </div>
+              
+          </form>
+      
+        </div>
+      </nav>
+
+
+
+
+      <div aria-live="polite" aria-atomic="true" class="position-relative">
+        <div class="toast-container position-absolute top-0 end-0 p-3">
+          <div id="myToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body" id="usertoast">
+                Welcome Home !
+              </div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="container">
+        <div class="row"> <div class="col"><br/></div></div>
+
+        <div class="collapse multi-collapse" id="multiCollapseExample2">
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card" style="width: 18rem;">
+                                <img src="./step1.png" class="card-img-top" alt="...">
+                                <div class="card-body">
+                                  <h5 class="card-title">Step 1</h5>
+                                  <p class="card-text">Each service is indipendent. Service com is trought api with service url and port</p>
+                                </div>
+                              </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card" style="width: 18rem;">
+                                <img src="./step2.png" class="card-img-top" alt="...">
+                                <div class="card-body">
+                                  <h5 class="card-title">Step 2</h5>
+                                  <p class="card-text">Api gw recive the request and send it to the right micro according some rules</p>
+                                </div>
+                              </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card" style="width: 18rem;">
+                                <img src="./step3.png" class="card-img-top" alt="...">
+                                <div class="card-body">
+                                  <h5 class="card-title">Step 3</h5>
+                                  <p class="card-text">After recived a reference token by id srv , api gw check authentication due introspection endpoint</p>
+                                </div>
+                              </div>
+                        </div>
+                      </div>
+                      <hr/>
+                      <div class="row">
+                        <div class="col-md-4">
+                          <div class="card" style="width: 18rem;">
+                              <img src="./step4.png" class="card-img-top" alt="...">
+                              <div class="card-body">
+                                <h5 class="card-title">Step 4</h5>
+                                <p class="card-text">To outside we use a reference token or opaque token. Internally after introspection a jwt is used to carry the caller identity. 
+                                  Api gw is used also to protect north-south traffic
+                                </p>
+                              </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="card" style="width: 18rem;">
+                              <img src="./step5.png" class="card-img-top" alt="...">
+                              <div class="card-body">
+                                <h5 class="card-title">Step 5</h5>
+                                <p class="card-text">Service mesh add a data-plane , a proxy in front of each microservice that handle some complixity like tls and so on. Control plane is used to manage all the configuration required by the sidcar proxies
+                                </p>
+                              </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="card" style="width: 18rem;">
+                              <img src="./step6.png" class="card-img-top" alt="...">
+                              <div class="card-body">
+                                <h5 class="card-title">Step 6</h5>
+                                <p class="card-text">Monitoring is easy and possible due dp proxies and prometeus.
+                                </p>
+                              </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="list-group">
+                        <button type="button" class="list-group-item list-group-item-action active" aria-current="true">
+                            <i class="bi bi-star-fill"></i>
+                            Starring
+                        </button>
+                        <button type="button" class="list-group-item list-group-item-action"><b><a href="https://kubernetes.io/" target="_blank">Kubernetes</a></b></button>
+                        <button type="button" class="list-group-item list-group-item-action"><b><a href="https://konghq.com/kong" target="_blank">Kong</a></b> as api gw</button>
+                        <button type="button" class="list-group-item list-group-item-action"><b><a href="https://helm.sh/" target="_blank">Helm</a></b></button>
+                        <button type="button" class="list-group-item list-group-item-action"><b><a href="https://curity.io/" target="_blank">Curity</a></b></button>
+                        <button type="button" class="list-group-item list-group-item-action"><b><a href="https://www.envoyproxy.io" target="_blank">Envoy</a></b> as sidecar proxy</button>
+                        <button type="button" class="list-group-item list-group-item-action"><b><a href="https://kuma.io/" target="_blank">クマ</a></b> as Kuma</button>
+                      </div>
+                      
+                </div>
+            </div>           
+            <div class="row"><div class="col-md-12"><hr/></div></div>
+          </div>
+
+        
+        <div class="row">
+          <div class="col col-md-10">
+            <div class="input-group mb-3 col-md-9">
+              <span class="input-group-text" id="basic-addon1">Domain Name</span>
+              <input type="text" id="domain_name" class="form-control" placeholder="localhost" aria-label="Domain" aria-describedby="basic-addon1">
+              <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="setDomainName()">Set Value</button>
+            </div>  
+            <div class="input-group mb-3 col-md-9">
+              <span class="input-group-text" id="basic-addon1">Scopes</span>
+              <input type="text" id="scopes" placeholder="Allowed scopes are: openid read . Default is openid" class="form-control" placeholder="localhost" aria-label="Domain" aria-describedby="basic-addon1">
+              <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="setScopes()">Set Value</button>
+            </div>  
+
+          </div>
+
+          <div class="col-md-2">
+              <button class="btn btn-warning" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Useful links</button>
+  
+              <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+                <div class="offcanvas-header">
+                  <h5 id="offcanvasRightLabel">Useful links</h5>
+                  <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                  <ul class="list-group">
+                    <li class="list-group-item"><a href="https://jwt.io/" target="_blank">Jwt.io </a></li>
+                    <li class="list-group-item"><a href="https://play.openpolicyagent.org/" target="_blank">Rego playground </a></li>
+                    <li class="list-group-item"><a href="https://github.com/anderseknert/awesome-opa" target="_blank">Awsome repo opa</a></li>
+                  </ul>
+                </div>
+              </div>
+          </div>
+        </div>
+
+
+        <div class="row">          
+            <div class="col-md-12">
+                <button type="button" class="btn btn-success" id="hello_a">Say hello service A</button>
+                <button type="button" class="btn btn-info" id="hello_b">Say hello service B</button>
+                <button type="button" class="btn btn-warning" id="hello_c">Say hello service C</button>
+                <button type="button" class="btn btn-warning" id="kafka">Send kafka message!</button>
+                <button type="button" class="btn btn-warning" id="echo">Echo a</button>
+                <button type="button" class="btn btn-warning" id="postit">Make a post</button>
+                  <a type="button" class="mr-0 btn btn-primary float-right" id="token_get" href=""><i class="bi bi-card-text"></i>
+                     Hei ID give me a token!</a>
+                    </div>
+            </div>
+            <div class="col-md-3 text-right ">
+          </div>
+          <hr/>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="input-group mb-3">
+                <input type="text" class="form-control" id="hello_who" placeholder="To" aria-label="Recipient's username" aria-describedby="button-addon2">
+                <button class="btn btn-outline-secondary" type="button" id="say_hi">Hi from a</button>
+              </div>              
+            </div>          
+          </div>
+          <hr/>
+          <div class="row">
+            <div class="col">
+                <button type="button" class="btn btn-outline-primary" onclick="call('a','b');">A => B </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="call('a','c');">A => C</button>
+                <button type="button" class="btn btn-outline-success" onclick="call('b','c');">B => C</button>
+                <button type="button" class="btn btn-outline-danger" onclick="call('a','b','c');">A => B => C</button>
+            </div>
+          </div>
+          <hr/>
+          <div class="row">
+            <div class="col">
+              <p>
+                <a class="btn btn-info"  href="#cp" id="cp_link" target="_blank">
+                  <i class="bi bi-easel3"></i> Koro sensei!
+                </a>
+
+                <a class="btn btn-danger" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                  <i class="bi bi-incognito"></i> I want to belive
+                </a>
+
+                <a class="btn btn-warning" href="#monitoring" role="button" id="gf_link" target="_blank">
+                  <i class="bi bi-emoji-heart-eyes-fill"></i> Lumos!
+                </a>
+                
+                <a class="btn btn-success" href="#monitoring" role="button" id="id_link" target="_blank">
+                  <i class="bi bi-file-earmark-person"></i> Bond, James bond
+                </a>
+                <a class="btn btn-secondary" href="#monitoring" role="button" id="tc_link" target="_blank">
+                  <i class="bi bi-bricks"></i> Speak, friend, and enter
+                </a>
+                <a class="btn btn-primary" href="#monitoring" role="button" id="op_link" target="_blank">
+                  <i class="bi bi-check2-all"></i> One ring to rule them all
+                </a>
+
+                <button class="btn btn-light"  role="button" id="back">
+                  <i class="bi bi-check2-all"></i> I'm baaaaaack !
+                </button>
+                <hr/>
+                <a class="btn btn-info"  role="button" id="kafka" target="_blank" href="http://mesh.do/kafkaui/ui/">
+                  <i class="bi bi-check2-all"></i> Great Scott!
+                </a>
+
+               <!--- <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                  Button with data-bs-target
+                </button>-->
+              </p>
+              <div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                  export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"<br/>
+                  kubectl sniff service-b-65f49d7955-ckshm -n demo -p --tcpdump-image bilalunalnet/tcpdump-alpine -f "port 3000"  
+                </div>
+              </div>
+              <div class="collapse" id="cp">
+                <div class="card card-body">
+                   <hr/>
+                   kubectl port-forward svc/my-kong-kong-admin -n kong 9999:8001
+                   <a href="http://localhost:9999" target="_blanck">Kong admin apis</a> 
+                   <hr/>
+                   https://mesh.do:8040/admin
+                   <a href="http://localhost:9999" target="_blanck">IDP </a> 
+                   <hr/>                   
+                   http://mesh.do:8010/gui
+                   <a href="http://localhost:9991" target="_blanck">Tracing!</a> 
+                   <hr/>               
+                   http://mesh.do:8050/
+                   <a href="http://localhost:9999" target="_blanck">IDP </a> 
+                   
+
+                   <a href="https://play.openpolicyagent.org/p/z0cNDTNpoq" target="_blanck">Opa playground!</a> 
+                </div>
+              </div>
+
+            </div>
+          </div>
+          
+          <div class="card card-body log-console" id="console"></div>
+          <button type="button" class="btn btn-light" onclick="document.getElementById('console').innerHTML = '';">Clear console</button>
+
+ 
+
+          
+        <!-- Content here -->
+      </div>
+      
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    -->
+    <script type="text/javascript">
+
+        var aUrl = '';
+        var bUrl = '';
+        var cUrl = '';
+ 
+        var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+        console.log(toastElList);
+
+        var toastList = toastElList.map(function (toastEl) {
+          return new bootstrap.Toast(toastEl, {});
+        });
+        
+
+        var tk = false;
+        var user = false;
+        var domain_name = 'mesh.do';
+        var scopes = 'openid read';
+
+        handleErrors = function(response) {
+          console.log('handle error');
+          if (!response.ok) {
+              throw Error(response.statusText);
+          }
+          return response;
+      }
+
+
+      function setDomainName(){
+        var domain_name_field = document.getElementById('domain_name')
+            domain_name = domain_name_field.value;
+            domain_name =  (domain_name == '' || domain_name == undefined) ? 'mesh.do' : domain_name;
+            console.log('use domain',domain_name);
+            populateUrl();
+      }
+
+      function setScopes(){
+        //openid%20read
+        var scopes_field = document.getElementById('scopes')
+            scopes = scopes_field.value;
+            scopes =  (scopes == '' || scopes == undefined) ? 'openid read' : scopes;
+            console.log('use scopes',scopes);
+            tokenUrl();
+
+      }
+
+
+      function populateUrl()
+      {
+        document.getElementById('cp_link').href = getBaseUrl('8030')+'/gui';
+        document.getElementById('gf_link').href = getBaseUrl('80')+'/monitoring';
+        document.getElementById('id_link').href = getBaseUrl('8040','https')+'/admin';
+        document.getElementById('tc_link').href = getBaseUrl('8050')+'/gui';
+        document.getElementById('op_link').href = getBaseUrl('8010')+'';
+        aUrl = getBaseUrl()+'/service_a';
+        bUrl = getBaseUrl()+'/service_b';
+        cUrl = getBaseUrl()+'/service_c';
+      }
+
+      function getIdUrl()
+      {
+        return `https://${domain_name}:8060`;
+      }
+
+
+      function getBaseUrl(port = 80,proto = 'http')
+      {
+        return `${proto}://${domain_name}:${port}`;
+      }
+
+      function tokenUrl()
+      {
+        var el = document.getElementById('token_get');
+        var client_id = 'a';
+        var redirect = 'http://localhost:3000';
+        el.href = `${getIdUrl()}/oauth/v2/oauth-authorize?client_id=${client_id}&response_type=code&redirect_uri=${redirect}&scope=${scopes}`;
+      }
+
+
+      function sayhi()
+      {
+            var btnA = document.getElementById('say_hi');
+
+
+            btnA.onclick = (ev) => {
+              var requestOptions = {
+                method: 'GET',                
+              };
+
+              var to = document.getElementById('hello_who');
+            to = to.value;
+            console.log('say hiu to ' + to);
+
+            
+              if(tk !== false && tk.access_token != ''){
+                 var myHeaders = new Headers();
+                 myHeaders.append("Authorization", "Bearer " + tk.access_token);
+                 requestOptions.headers = myHeaders; 
+              }
+
+                logout('fetch', aUrl+'/konbawa/'+ to);
+                fetch(aUrl+'/konbawa/'+to,requestOptions)
+                .then(response => {
+                  console.log('response recived');
+                  if(!response.ok){
+                    console.log('error resopnse');
+                    return response.text().then(text => { throw new Error(text) })
+                  }
+                  console.log('good response');
+                  return response.json();
+                })
+                .then(data => logout('service a',data))
+                .catch(error => logerr(`something goes wrong! [${error.message}]`));                
+            };
+      }
+        
+
+      function postit()
+      {
+        var btnA = document.getElementById('postit');
+            btnA.onclick = (ev) => {
+              var requestOptions = {
+                method: 'POST',                
+              };
+              if(tk !== false && tk.access_token != ''){
+                 var myHeaders = new Headers();
+                 myHeaders.append("Authorization", "Bearer " + tk.access_token);
+                 requestOptions.headers = myHeaders; 
+              }
+
+                logout('fetch', aUrl);
+                fetch(aUrl,requestOptions)
+                .then(response => {
+                  console.log('response recived');
+                  if(!response.ok){
+                    console.log('error resopnse');
+                    return response.text().then(text => { throw new Error(text) })
+                  }
+                  console.log('good response');
+                  return response.json();
+                })
+                .then(data => logout('service a',data))
+                .catch(error => logerr(`something goes wrong! [${error.message}]`));                
+            };
+
+      }
+
+
+      function echo()
+      {
+            var btnA = document.getElementById('echo');
+            btnA.onclick = (ev) => {
+              var requestOptions = {
+                method: 'GET',                
+              };
+              if(tk !== false && tk.access_token != ''){
+                 var myHeaders = new Headers();
+                 myHeaders.append("Authorization", "Bearer " + tk.access_token);
+                 requestOptions.headers = myHeaders; 
+              }
+
+                logout('fetch', aUrl+'/echo');
+                fetch(aUrl+'/echo',requestOptions)
+                .then(response => {
+                  console.log('response recived');
+                  if(!response.ok){
+                    console.log('error resopnse');
+                    return response.text().then(text => { throw new Error(text) })
+                  }
+                  console.log('good response');
+                  return response.json();
+                })
+                .then(data => logout('service a',data))
+                .catch(error => logerr(`something goes wrong! [${error.message}]`));                
+            };
+      }
+
+        function init(){
+            console.log('init');
+
+            setDomainName();
+            tokenUrl();
+            setScopes();
+            sayhi();
+            echo();
+            postit();
+            initGraphql();
+
+
+            var kb = document.getElementById('kafka');
+            kb.onclick = function(){
+              
+              var requestOptions = {
+                method: 'GET',                
+              };
+              if(tk !== false && tk.access_token != ''){
+                 var myHeaders = new Headers();
+                 myHeaders.append("Authorization", "Bearer " + tk.access_token);
+                 requestOptions.headers = myHeaders; 
+              }
+
+                logout('fetch', aUrl+'/send/test');
+                fetch(aUrl+'/send/test',requestOptions)
+                .then(response => {
+                  console.log('response recived');
+                  if(!response.ok){
+                    console.log('error resopnse');
+                    return response.text().then(text => { throw new Error(text) })
+                  }
+                  console.log('good response');
+                  return response.json();
+                })
+                .then(data => logout('service a',data))
+                .catch(error => logerr(`something goes wrong! [${error.message}]`));     
+            }
+
+            const queryString = window.location.search;
+            console.log(queryString);
+            if(queryString != '') console.log('no query');
+            const urlParams = new URLSearchParams(queryString);          
+            
+          
+            if(urlParams.has('code'))
+            {
+              const code = urlParams.get('code');
+              console.log(code);
+
+              var myHeaders = new Headers();
+              myHeaders.append("Authorization", "Bearer " + tk.access_token);
+
+              var requestOptions = {
+                method: 'GET',                
+              };
+
+              console.log('check tk ', tk);
+              if(tk !== false && tk.access_token != ''){
+                console.log('access token found');
+                 requestOptions.headers = myHeaders; 
+              }
+
+              fetch(`http://localhost:3000/callback?code=`+code, requestOptions)
+                .then(response => response.json())
+                .then(result => tk = result)
+                .then(sayhello)
+                .catch(error => logerr(error));                
+            } 
+            else console.log('no code');
+
+            
+            
+            var btnA = document.getElementById('hello_a');
+            btnA.onclick = (ev) => {
+
+              var requestOptions = {
+                method: 'GET',                
+              };
+              if(tk !== false && tk.access_token != ''){
+                 var myHeaders = new Headers();
+                 myHeaders.append("Authorization", "Bearer " + tk.access_token);
+                 requestOptions.headers = myHeaders; 
+              }
+
+                logout('fetch', aUrl);
+                fetch(aUrl,requestOptions)
+                .then(response => {
+                  console.log('response recived');
+                  if(!response.ok){
+                    console.log('error resopnse');
+                    return response.text().then(text => { throw new Error(text) })
+                  }
+                  console.log('good response');
+                  return response.json();
+                })
+                .then(data => logout('service a',data))
+                .catch(error => logerr(`something goes wrong! [${error.message}]`));                
+            };
+
+            var btnB = document.getElementById('hello_b');
+            btnB.onclick = (ev) => {
+              var requestOptions = {
+                method: 'GET',                
+              };
+
+              console.log('check tk ', tk);
+              if(tk !== false && tk.access_token != ''){
+                 var myHeaders = new Headers();
+                 myHeaders.append("Authorization", "Bearer " + tk.access_token);
+                 requestOptions.headers = myHeaders; 
+              }
+
+                logout('fetch', bUrl);
+                fetch(bUrl,requestOptions)
+                .then(response => {
+                  console.log('response recived');
+                  if(!response.ok){
+                    console.log('error resopnse');
+                    return response.text().then(text => { throw new Error(text) })
+                  }
+                  console.log('good response');
+                  return response.json();
+                })
+                .then(data => logout('service b',data))
+                .catch(error => logerr(`something goes wrong! [${error.message}]`));                
+            };
+
+            var btnB = document.getElementById('hello_c');
+            btnB.onclick = (ev) => {
+              var requestOptions = {
+                method: 'GET',                
+              };
+
+              console.log('check tk ', tk);
+              if(tk !== false && tk.access_token != ''){
+                 var myHeaders = new Headers();
+                 myHeaders.append("Authorization", "Bearer " + tk.access_token);
+                 requestOptions.headers = myHeaders; 
+              }
+                logout('fetch', cUrl);
+                fetch(cUrl,requestOptions)
+                .then(response => response.json())
+                .then(data => logout('service c',data))
+                .catch(error => logerr('something goes wrong!'));                
+            };
+
+
+        }
+
+        initGraphql = function()
+        {
+              var el = document.getElementById('back');
+              el.onclick = (e) => {
+                console.log('calling graphql server');
+                
+
+                var body = JSON.stringify({
+                query: `
+                query a {
+                      books {
+                          id
+                          title
+                          libraries {
+                              id
+                              name
+                              address
+                          }
+                      }
+                  }
+                `,
+                  variables: {
+                    now: new Date().toISOString(),
+                  },
+                });
+
+  
+              var requestOptions = {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },                                 
+                  body
+                };
+                fetch(getBaseUrl('8000')+'/api',requestOptions)
+                .then(response => {
+                  if(!response.ok) throw new Error(response)
+                  return response.json();
+                }).then(r => logout('api graphql', r))
+                .catch(error => logerr(error))
+              };        
+        }
+        
+        helloUser = function(what)
+        {
+          console.log('helloUser');
+          (document.getElementById('usertoast')).innerHTML = 'Welcome home <b>' + what.toUpperCase() + '</b>';
+          var myToastEl = document.getElementById('myToast');
+          var myToast = bootstrap.Toast.getInstance(myToastEl) // Returns a Bootstrap toast instance
+          myToast.show();
+          logout('authZ',tk);
+          logout('authN','hello user ' + what);
+          
+        }
+
+        sayhello = function()
+        {
+          var myHeaders = new Headers();
+          myHeaders.append("Authorization", "Bearer " + tk.access_token);
+          
+          var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            //mode: 'no-cors'
+          };
+          console.log('requestOptions',requestOptions);
+
+          fetch(`${getIdUrl()}/oauth/v2/oauth-userinfo`, requestOptions)
+            .then(response => response.json())
+            .then(result => { console.log(result); helloUser(result.sub) })
+            .catch(error => console.log('error', error));
+        }
+
+        call = function(from,to,extra = ''){
+            console.log('call ', from ,to , extra);
+            var url ='';
+            switch(from){
+                case 'a': 
+                    url = aUrl;
+                    break;
+                case 'b':
+                    url = bUrl;
+                    break;
+                case 'c':
+                    url = cUrl;
+                    break;
+            };
+
+            var urltocall = url+'/'+to + extra;
+            var requestOptions = {
+               method: 'GET',
+            }
+            if(tk !== false && tk.access_token != ''){
+                 var myHeaders = new Headers();
+                 myHeaders.append("Authorization", "Bearer " + tk.access_token);
+                 requestOptions.headers = myHeaders; 
+              }
+
+            logout('fetch', urltocall);
+            fetch(urltocall,requestOptions)
+                .then(response => response.json())
+                .then(data => logout(`${from} > ${to}${extra != '' ?  ' > ' + extra : ''}`,data))
+                .catch(error => logerr('something goes wrong!'));                
+        }
+
+        window.onload = function(){
+            init();
+        };
+
+        logout = function(namespace, data){
+            var el = document.getElementById('console');
+            console.log(data);
+            var html = `<br>[${namespace}] ${JSON.stringify(data)}`;
+            el.innerHTML += html;
+      
+        }
+
+
+        logerr = function(err){
+            var el = document.getElementById('console');
+            console.log(err);
+            var html = `<br><span class="text-danger">${JSON.stringify(err)}</span>`;
+            el.innerHTML += html;
+      
+        }
+
+
+    </script>
+
+  </body>
+</html>

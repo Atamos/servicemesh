@@ -1,0 +1,7 @@
+annotations:
+  namespace: demo
+
+podannotations:
+  namespace: demo
+
+

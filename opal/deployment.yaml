@@ -1,0 +1,273 @@
+---
+# Source: opal/templates/service-client.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: myopal-client
+  labels:
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "0.1.8"
+    helm.sh/chart: "opal-0.0.5"
+    app.kubernetes.io/name: "myopal-client"
+    app.kubernetes.io/instance: "myopal"
+    opal.ac/role: client
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 7000
+      targetPort: http
+      protocol: TCP
+    - name: opa
+      port: 8181
+      targetPort: opa
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: "myopal-client"
+    app.kubernetes.io/instance: "myopal"
+    opal.ac/role: client
+---
+# Source: opal/templates/service-pgsql.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: "myopal-pgsql"
+  labels:
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "0.1.8"
+    helm.sh/chart: "opal-0.0.5"
+    app.kubernetes.io/name: "myopal-pgsql"
+    app.kubernetes.io/instance: "myopal"
+    opal.ac/role: pgsql
+spec:
+  type: ClusterIP
+  ports:
+    - name: pgsql
+      port: 5432
+      targetPort: pgsql
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: "myopal-pgsql"
+    app.kubernetes.io/instance: "myopal"
+    opal.ac/role: pgsql
+---
+# Source: opal/templates/service-server.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: "myopal-server"
+  labels:
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "0.1.8"
+    helm.sh/chart: "opal-0.0.5"
+    app.kubernetes.io/name: "myopal-server"
+    app.kubernetes.io/instance: "myopal"
+    opal.ac/role: server
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 7002
+      targetPort: http
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: "myopal-server"
+    app.kubernetes.io/instance: "myopal"
+    opal.ac/role: server
+---
+# Source: opal/templates/deployment-client.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "myopal-client"
+  labels:
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "0.1.8"
+    helm.sh/chart: "opal-0.0.5"
+    app.kubernetes.io/name: "myopal-client"
+    app.kubernetes.io/instance: "myopal"
+    opal.ac/role: client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "myopal-client"
+      app.kubernetes.io/instance: "myopal"
+      opal.ac/role: client
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: "Helm"
+        app.kubernetes.io/version: "0.1.8"
+        helm.sh/chart: "opal-0.0.5"
+        app.kubernetes.io/name: "myopal-client"
+        app.kubernetes.io/instance: "myopal"
+        opal.ac/role: client
+    spec:
+      containers:
+        - name: opal-client
+          image: "docker.io/authorizon/opal-client:0.1.8"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 7000
+              protocol: TCP
+            - name: opa
+              containerPort: 8181
+              protocol: TCP
+          env:
+            - name: UVICORN_NUM_WORKERS
+              value: "1"
+            - name: OPAL_SERVER_URL
+              value: "http://myopal-server:7002"
+          readinessProbe:
+            httpGet:
+              path: /healthcheck
+              port: http
+            failureThreshold: 5
+            initialDelaySeconds: 5
+            timeoutSeconds: 10
+            periodSeconds: 15
+
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: http
+            failureThreshold: 5
+            timeoutSeconds: 10
+            periodSeconds: 30
+---
+# Source: opal/templates/deployment-pgsql.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myopal-pgsql
+  labels:
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "0.1.8"
+    helm.sh/chart: "opal-0.0.5"
+    app.kubernetes.io/name: "myopal-pgsql"
+    app.kubernetes.io/instance: "myopal"
+    opal.ac/role: pgsql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "myopal-pgsql"
+      app.kubernetes.io/instance: "myopal"
+      opal.ac/role: pgsql
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: "Helm"
+        app.kubernetes.io/version: "0.1.8"
+        helm.sh/chart: "opal-0.0.5"
+        app.kubernetes.io/name: "myopal-pgsql"
+        app.kubernetes.io/instance: "myopal"
+        opal.ac/role: pgsql
+    spec:
+      containers:
+        - name: pgsql
+          image: "postgres:alpine"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: pgsql
+              containerPort: 5432
+              protocol: TCP
+          env:
+            - name: POSTGRES_DB
+              value: postgres
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+---
+# Source: opal/templates/deployment-server.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "myopal-server"
+  labels:
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/version: "0.1.8"
+    helm.sh/chart: "opal-0.0.5"
+    app.kubernetes.io/name: "myopal-server"
+    app.kubernetes.io/instance: "myopal"
+    opal.ac/role: server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "myopal-server"
+      app.kubernetes.io/instance: "myopal"
+      opal.ac/role: server
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: "Helm"
+        app.kubernetes.io/version: "0.1.8"
+        helm.sh/chart: "opal-0.0.5"
+        app.kubernetes.io/name: "myopal-server"
+        app.kubernetes.io/instance: "myopal"
+        opal.ac/role: server
+    spec:
+      containers:
+        - name: opal-server
+          image: "docker.io/authorizon/opal-server:0.1.8"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 7002
+              protocol: TCP
+          env:
+            - name: OPAL_POLICY_REPO_URL
+              value: "https://github.com/authorizon/opal-example-policy-repo"
+            - name: OPAL_POLICY_REPO_POLLING_INTERVAL
+              value: "30"
+            - name: UVICORN_NUM_WORKERS
+              value: "4"
+            - name: OPAL_DATA_CONFIG_SOURCES
+              value: '{"config":{"entries":[]}}'
+            - name: OPAL_BROADCAST_URI
+              value: 'postgres://postgres:postgres@myopal-pgsql:5432/postgres'
+          readinessProbe:
+            httpGet:
+              path: /healthcheck
+              port: http
+            failureThreshold: 5
+            initialDelaySeconds: 5
+            timeoutSeconds: 10
+            periodSeconds: 15
+
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: http
+            failureThreshold: 5
+            timeoutSeconds: 10
+            periodSeconds: 30
+---
+# Source: opal/templates/tests/e2e.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: opal-e2e
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  restartPolicy: Never
+  containers:
+  - name: e2e
+    image: "apteno/alpine-jq:2021-04-25"
+    command:
+    - '/bin/sh'
+    - '-c'
+    - |
+      set -x
+      set -e
+
+      sleep 15
+
+      [ "$(curl -s http://myopal-client:8181/v1/data | jq '.result.users | keys | length')" -eq 3 ]
+      [ "$(curl -s http://myopal-client:8181/v1/data | jq '.result.role_permissions | keys | length')" -eq 3 ]

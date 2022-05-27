@@ -1,0 +1,13 @@
+services:
+  - name: policies
+    url: https://github.com/Atamos/opa/raw/
+
+bundles:
+  authz:
+    service: policies
+    resource: gh-pages/example-bundle.tar.gz
+    persist: true
+    polling:
+      min_delay_seconds: 30
+      max_delay_seconds: 120
+      long_polling_timeout_seconds: 10

@@ -1,0 +1,65 @@
+
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.2", for: EXECUTION)
+{
+  query: Query
+}
+
+directive @join__field(graph: join__Graph!, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+type Book
+  @join__type(graph: BOOKS, key: "id")
+  @join__type(graph: LIBRARIES, key: "id")
+{
+  id: ID! @join__field(graph: BOOKS) @join__field(graph: LIBRARIES, external: true)
+  title: String @join__field(graph: BOOKS)
+  author: String @join__field(graph: BOOKS)
+  libraries: [Library] @join__field(graph: LIBRARIES)
+}
+
+scalar join__FieldSet
+
+enum join__Graph {
+  BOOKS @join__graph(name: "books", url: "http://localhost:3000/graphql")
+  LIBRARIES @join__graph(name: "libraries", url: "http://localhost:3010/graphql")
+}
+
+type Library
+  @join__type(graph: LIBRARIES, key: "id")
+{
+  id: ID!
+  name: String
+  address: String
+  type: String
+}
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  `SECURITY` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+
+  """
+  `EXECUTION` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+type Query
+  @join__type(graph: BOOKS)
+  @join__type(graph: LIBRARIES)
+{
+  books: [Book] @join__field(graph: BOOKS)
+  libraries: [Library] @join__field(graph: LIBRARIES)
+}

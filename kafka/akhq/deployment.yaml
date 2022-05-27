@@ -1,0 +1,132 @@
+---
+# Source: akhq/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-akhq
+  namespace: demo
+  labels:
+    app.kubernetes.io/name: akhq
+    helm.sh/chart: akhq-0.2.8
+    app.kubernetes.io/instance: my-akhq
+    app.kubernetes.io/managed-by: Helm
+data:
+  application.yml: |
+    micronaut:
+      server:
+        context-path: /kafkaui
+    akhq:
+      server:
+        access-log:
+          enabled: false
+          name: org.akhq.log.access
+      connections:
+        local:
+          properties:
+            bootstrap.servers: 'kafka-service.demo.svc.cluster.local:9092'
+          schema-registry:
+            url: "http://ktool-schema-registry.demo.svc.cluster.local:8081"
+       
+---
+# Source: akhq/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-akhq
+  namespace: demo
+  labels:
+    app.kubernetes.io/name: akhq
+    helm.sh/chart: akhq-0.2.8
+    app.kubernetes.io/instance: my-akhq
+    app.kubernetes.io/managed-by: Helm
+    ingress.kubernetes.io/service-upstream: "true"
+  annotations:
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: akhq
+    app.kubernetes.io/instance: my-akhq
+---
+# Source: akhq/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-akhq
+  namespace: demo
+  annotations:
+  labels:
+    app.kubernetes.io/name: akhq
+    helm.sh/chart: akhq-0.2.8
+    app.kubernetes.io/instance: my-akhq
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: akhq
+      app.kubernetes.io/instance: my-akhq
+  template:
+    metadata:
+      annotations:
+        checksum/config: a46747b2fe743ebe1ced08d352945311062d60f889a0a9b5bb6bbef7606b8742
+      labels:
+        app.kubernetes.io/name: akhq
+        app.kubernetes.io/instance: my-akhq
+    spec:
+      serviceAccountName: default
+      containers:
+        - name: akhq
+          image: "tchiotludo/akhq:0.21.0"
+          imagePullPolicy: Always
+          env:
+          volumeMounts:
+            - name: config
+              mountPath: /app/application.yml
+              subPath: application.yml
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+            - name: management
+              containerPort: 28081
+              protocol: TCP
+          # livenessProbe:
+          #   tcpSocket:
+          #     port: management
+          # readinessProbe:
+          #   httpGet:
+          #     path: /health
+          #     port: management
+          resources:
+            {}
+      volumes:
+      - name: config
+        configMap:
+          name: my-akhq
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kafkahq
+  namespace: demo
+  annotations:
+    konghq.com/strip-path: "false"
+spec:
+  ingressClassName: kong
+  rules:
+    - http:
+        paths:
+          - path: /kafkaui/
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: my-akhq
+                port:
+                  number: 80

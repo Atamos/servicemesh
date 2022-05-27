@@ -1,0 +1,3 @@
+[submodule "opa/bundle"]
+	path = opa/bundle
+	url = git@github.com:Atamos/opa.git

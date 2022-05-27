@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-a
+  namespace: demo
+spec:
+  selector:
+    matchLabels:
+      app: service-a
+  replicas: 1
+  template:
+    metadata:
+      annotations: 
+        kuma.io/mesh: default
+        #kuma.io/transparent-proxying-reachable-services: '*'
+      labels:
+        app: service-a
+    spec:
+      containers:
+      - name: service-a
+        image: atamos/service_a:graphql11
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+      - name: opa
+        image: openpolicyagent/opa:latest-envoy
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /config
+          name: opa-envoy-config
+        args:
+        - "run"
+        - "--server"
+        - "--ignore=.*"
+        - "--addr=http://127.0.0.1:8181"
+        - "--diagnostic-addr=0.0.0.0:8282"
+        - "--set=plugins.envoy_ext_authz_grpc.addr=:9191"
+        - "--set=plugins.envoy_ext_authz_grpc.path=envoy/authz/allow"
+        - "--set=decision_logs.console=true"
+        - --config-file=/config/config.yaml
+        livenessProbe:
+          httpGet:
+            path: /health?plugins
+            scheme: HTTP
+            port: 8282
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health?plugins
+            scheme: HTTP
+            port: 8282
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: opa-envoy-config
+        configMap:
+          name: opa-envoy-config          
+
+--- 
+
+apiVersion: v1
+kind: Service
+metadata: 
+  name: service-a
+  namespace: demo
+  labels:
+    app: service-a
+  annotations:
+    konghq.com/plugins:  my-custom-plugin, phantom-token-plugin, opaoffload
+    ingress.kubernetes.io/service-upstream: "true"
+spec: 
+  selector:
+    app: service-a
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+      appProtocol: http
+      name: service-a-http
+
+
+--- 
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: service-a
+  namespace: demo
+  annotations:
+    konghq.com/strip-path: "true"
+spec:
+  ingressClassName: kong
+  rules:
+    - http:
+        paths:
+          - path: /service_a
+            pathType: Prefix
+            backend:
+              service:
+                name: service-a
+                port:
+                  number: 80
+
+

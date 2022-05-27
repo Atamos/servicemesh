@@ -1,0 +1,35 @@
+{
+  "name": "service_a",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/subgraph": "^2.0.3",
+    "@autotelic/fastify-opentelemetry": "^0.16.0",
+    "@kafkajs/confluent-schema-registry": "^3.2.1",
+    "@opentelemetry/api": "^1.1.0",
+    "@opentelemetry/exporter-collector": "^0.25.0",
+    "@opentelemetry/instrumentation-fastify": "^0.26.0",
+    "@opentelemetry/instrumentation-http": "^0.28.0",
+    "@opentelemetry/node": "^0.24.0",
+    "@opentelemetry/resources": "^1.2.0",
+    "@opentelemetry/sdk-trace-base": "^1.2.0",
+    "@opentelemetry/sdk-trace-node": "^1.2.0",
+    "@opentelemetry/semantic-conventions": "^1.2.0",
+    "@opentelemetry/tracing": "^0.24.0",
+    "apollo-server": "^3.7.0",
+    "apollo-server-core": "^3.7.0",
+    "apollo-server-fastify": "^3.7.0",
+    "dotenv": "^16.0.0",
+    "fastify": "^3.29.0",
+    "fastify-cors": "^6.1.0",
+    "graphql": "^16.5.0",
+    "kafkajs": "^2.0.1"
+  },
+  "description": ""
+}
